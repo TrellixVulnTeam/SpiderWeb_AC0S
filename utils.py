@@ -1,4 +1,8 @@
 import socket
+from lexer import *
+from pygments import highlight
+from pygments.lexers import *
+from pygments.formatters.terminal import TerminalFormatter
 import sys
 
 def get_ip():
@@ -22,3 +26,14 @@ class Platform(object):
 
     def is_mac(self):
         return sys.platform == 'darwin'
+
+
+class Regex:
+    @staticmethod
+    def highlight_line(content):
+        return highlight(content, Regex(ensurenl=False), TerminalFormatter())
+
+    @staticmethod
+    def output_highlight(*a_list):
+        for each in a_list:
+            print(Regex.highlight_line(each) + '\n')

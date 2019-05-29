@@ -1,5 +1,5 @@
-from utils import Platform
-
+from utils import Platform, Regex
+import argparse
 
 class Host:
     def __init__(self):
@@ -90,3 +90,34 @@ class Host:
         with open(self.hostsFile, 'r') as input:
             lines = input.readlines()
             return lines
+
+    def check_exist(self, *host_names):
+        result = []
+        with open(self.hostsFile, 'r') as f:
+            for line in list(f):
+                if line.startswith('#') or line == '\n':
+                    continue
+                if len([x for x in line.split()[1:] if x in host_names]):
+                    result.append(line.strip())
+
+            return result
+
+    def get_host_file(self):
+        return self.hostsFile
+
+    @staticmethod
+    def argument_handler(file_path):
+        parser = argparse.ArgumentParser(description='block certain hosts in hosts file',
+                                         epilog='hosts location: ' + file_path)
+        group = parser.add_mutually_exclusive_group()
+        group.add_argument("--menu", help="Opens menu")
+        group.add_argument("--list", action="store_true", help="Shows content of hosts file")
+        group.add_argument("--check", metavar='HOSTNAME', nargs='+',
+                           help="Check if host exists")
+        group.add_argument("--insert", metavar='HOSTNAME[:IP]', nargs='+',
+                           help="Append hostname")
+        group.add_argument("--remove", metavar='HOSTNAME', nargs='+',
+                           help="Remove hostname")
+
+        return parser
+

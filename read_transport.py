@@ -1,7 +1,6 @@
 import multiprocessing
 from scapy.all import *
-from utils import get_ip
-import logging
+from utils import get_ip, Regex
 
 
 class Reader:
@@ -12,16 +11,23 @@ class Reader:
         wrpcap('temp.pcap', pkts, append=True)
 
     def packet_sniffer(self):
-        pkts = sniff(filter="tcp", prn=Reader.packet_writer)
+        print("[!!!] Starting scan")
+        pkts = sniff(filter="ip", count=50)
+        self.packet_writer(pkts)
 
-    def sorter(self):
+    def sorter(self, trcroute):
         pkts = []
         line_num = 0
         raw_packets = rdpcap('temp.pcap')
-        for pkt in raw_packets:
-            mid_pkt = "from {0}:{1} ---> {2}:{3}".format(pkt.src, pkt.sport, pkt.dst, pkt.dport)
-            pkts.append(mid_pkt)
+        if trcroute:
+            for pkt in raw_packets:
+                mid_pkt = "from {0}:{1} ---> {2}:{3}".format(pkt.src, pkt.sport, pkt.dst, pkt.dport)
+                pkts.append(mid_pkt)
+        else:
+            for pkt in raw_packets:
+                pkts.append(pkt.src)
+                pkts.append(pkt.dst)
+
             pkts = list(set(pkts))
 
-        for pkt in pkts:
-            print(pkt)
+        return pkts
