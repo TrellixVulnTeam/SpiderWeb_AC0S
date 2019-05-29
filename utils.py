@@ -1,5 +1,5 @@
 import socket
-
+import sys
 
 def get_ip():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -11,3 +11,14 @@ def get_ip():
     finally:
         s.close()
     return ip
+
+
+class Platform(object):
+    def is_windows(self):
+        return sys.platform == 'win32' or sys.platform == 'cygwin'
+
+    def is_linux(self):
+        return 'linux' in sys.platform
+
+    def is_mac(self):
+        return sys.platform == 'darwin'
