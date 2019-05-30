@@ -2,11 +2,11 @@ from pygments.lexer import RegexLexer
 from pygments.token import *
 
 
-class Regex(RegexLexer):
+class Lexer(RegexLexer):
     name = 'regex for hosts'
     aliases = ['hosts']
     filenames = ['hosts']
-
+    # tokens for custom lexer
     tokens = {
         'root': [
             (r'#.*?$', Name.Decorator),
